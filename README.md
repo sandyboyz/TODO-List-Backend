@@ -6,7 +6,6 @@
 
 
 ## Requirements ⚙️
-----------
 
 - NodeJS
 - Git
@@ -24,7 +23,6 @@
 - **seeds** => place your seeds file (knex)
 
 ## Typescript Tips & Tricks 💡
-----------
 ```typescript
 // In common case you did not have to explicitly type on declare variable
 const a: number = 1; // Good
