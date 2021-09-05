@@ -1,6 +1,6 @@
-import { BaseUser, RegisterUser, User, ResponseUser } from "../types/user";
+import {BaseUser, RegisterUser, User, ResponseUser} from "../types/user";
 import dbService from "../services/db";
-import { OkPacket, RowDataPacket } from "mysql2";
+import {OkPacket, RowDataPacket} from "mysql2";
 
 const create = (user: RegisterUser) : Promise<number | null> => new Promise((resolve, reject) => {
   const queryString = `INSERT INTO User (email, name, password, role) VALUES (?, ?, ?, ?)`;
