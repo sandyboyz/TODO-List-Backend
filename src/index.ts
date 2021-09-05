@@ -1,4 +1,15 @@
-console.log('Welcome International Internship Mentee Group 11 🎉🎉');
-console.log("Let's the fun begin 🔥😉");
+import * as dotenv from "dotenv";
+import express from "express";
+import * as bodyParser from "body-parser";
+import userRouter from "./routes/user";
+import LOGGER from './helper/logger';
 
-// You can change this file and start developing :)
+const app = express();
+dotenv.config();
+
+app.use(bodyParser.json());
+app.use("/user", userRouter);
+
+app.listen(process.env.PORT, () => {
+  LOGGER.Info(`Node server started running in PORT ${process.env.PORT}`);
+});
