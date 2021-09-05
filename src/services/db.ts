@@ -8,7 +8,7 @@ const dbService = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PWD,
   database: process.env.DB_NAME,
-  port: <number><unknown>process.env.DB_PORT
+  port: process.env.DB_PORT as unknown as number
 });
 
 export default dbService

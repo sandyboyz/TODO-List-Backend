@@ -10,9 +10,9 @@ const create = (user: RegisterUser) : Promise<number | null> => new Promise((res
     [user.email, user.name, user.password, user.role],
     (err, result) => {
       // console.log("createV2", err, result)
-      if (err !== null) return reject(err);
+      if (err) return reject(err);
 
-      const insertId = (<OkPacket> result).insertId;
+      const insertId = (result as OkPacket).insertId;
       resolve(insertId);
     }
   );
@@ -23,11 +23,11 @@ const findOne = (email: string) : Promise<User | null> => new Promise((resolve, 
 
   dbService.query(queryString, email, (err, result) => {
     // console.log("findOneV2", err, result)
-    if (err !== null) return reject(err);
+    if (err) return reject(err);
 
-    if ((<RowDataPacket>result).length === 0) return resolve(null);
+    if (!(result as RowDataPacket).length) return resolve(null);
 
-    const row = (<RowDataPacket>result)[0];
+    const row = (result as RowDataPacket)[0];
     const user: User = {
       id: row.id,
       email: row.email,

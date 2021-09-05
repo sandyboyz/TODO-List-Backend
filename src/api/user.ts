@@ -5,7 +5,7 @@ import response from '../helper/response';
 import moment from 'moment-timezone';
 import CONSTANT from '../helper/constant';
 import {validationResult} from 'express-validator';
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt';
 import LOGGER from '../helper/logger';
 
 const userAPI = {
@@ -17,15 +17,16 @@ const userAPI = {
     const newUser: RegisterUser = req.body;
     try {
       const similarUser = await UserModel.findOne(newUser.email);
-      if (similarUser !== null) return res.status(400).json(response(requestTime, 'User with given email is already exists'));
+      if (similarUser) return res.status(400).json(response(requestTime, 'User with given email is already exists'));
 
       const salt = await bcrypt.genSalt(10);
       newUser.password = await bcrypt.hash(newUser.password, salt);
 
-      const id = await UserModel.create(newUser);
-      return res.status(201).json(response(requestTime, 'Register new user success', id, null))
+      await UserModel.create(newUser);
+
+      return res.status(201).json(response(requestTime, 'Register new user success', newUser))
     } catch (e) {
-      LOGGER.Error(<string>e);
+      LOGGER.Error(e as string);
       return res.status(500).json(response(requestTime, 'Internal server error', null, e))
     }
   }
