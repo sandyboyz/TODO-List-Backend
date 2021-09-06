@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 exports.seed = function (knex){
-  return knex('user')
+  return knex('users')
     .del()
     .then(function(){
-      return knex('user').insert(require('./data/user.json'))
+      return knex('users').insert(require('./data/user.json'))
     });
 }

@@ -7,7 +7,7 @@ const knex = require("knex");
  * @param {knex} knex 
  */
 exports.up = function(knex) {
-  return knex.schema.createTable('user', table => {
+  return knex.schema.createTable('users', table => {
     table.increments('id').primary();
     table.string('email').unique().notNullable();
     table.string('name');
@@ -23,5 +23,5 @@ exports.up = function(knex) {
  * @returns 
  */
 exports.down = function(knex) {
-  return knex.schema.dropTable('user');
+  return knex.schema.dropTable('users');
 };
