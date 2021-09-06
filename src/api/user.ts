@@ -39,10 +39,8 @@ const userAPI = {
       const loggedUser: LoginUser = req.body;
       try {
           const user = await UserModel.findOne(loggedUser.email);
-          if (!user) return res.status(404).json(response(requestTime, 'User with given email does not exists'));
-
           const isMatch = await bcrypt.compare(loggedUser.password, (user as User).password);
-          if (!isMatch) return res.status(400).json(response(requestTime, 'Incorrect password'));
+          if (!user || !isMatch) return res.status(400).json(response(requestTime, 'Email or password is incorrect'));
 
           // user = <ResponseUser>user
           const token = tokenService.signTokenAuth(loggedUser.email);
