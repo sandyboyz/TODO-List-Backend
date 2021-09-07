@@ -18,7 +18,7 @@ const userAPI = {
   register: async (req: Request, res: Response) : Promise<Response> => {
     const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.dateFormat);
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json(response(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
+    if (!errors.isEmpty() || errors.array().length === 0) return res.status(400).json(response(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
 
     const newUser: RegisterUser = req.body;
     try {
@@ -38,7 +38,7 @@ const userAPI = {
   login: async (req: Request, res: Response) : Promise<Response> => {
     const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.dateFormat);
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json(response(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
+    if (!errors.isEmpty() || errors.array().length === 0) return res.status(400).json(response(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
 
     const loggedUser: LoginUser = req.body;
     try {
@@ -56,7 +56,7 @@ const userAPI = {
   resetPassword: async (req: Request, res: Response) : Promise<Response> => {
     const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.dateFormat);
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json(response(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
+    if (!errors.isEmpty() || errors.array().length === 0) return res.status(400).json(response(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
 
     const baseUser: BaseUser = req.body;
     try {
@@ -82,7 +82,7 @@ const userAPI = {
   confirmResetPassword: async (req: Request, res: Response) : Promise<Response> => {
     const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.dateFormat);
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json(response(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
+    if (!errors.isEmpty() || errors.array().length === 0) return res.status(400).json(response(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
 
     const token = req.query.t;
     const {newPassword} = req.body;
@@ -106,7 +106,7 @@ const userAPI = {
   confirmResetPasswordPage: async (req: Request, res: Response) : Promise<Response | void> => {
     const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.dateFormat);
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(404).json(response(requestTime, 'Invalid url'));
+    if (!errors.isEmpty() || errors.array().length === 0) return res.status(404).json(response(requestTime, 'Invalid url'));
 
     const token = req.query.t;
     try {
