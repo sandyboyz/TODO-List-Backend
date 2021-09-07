@@ -21,6 +21,10 @@ interface ResponseUser extends BaseUser {
   id: number
 }
 
+interface PayloadUser extends BaseUser{
+  role: number
+}
+
 export {
-  BaseUser, LoginUser, RegisterUser, User, ResponseUser
+  BaseUser, LoginUser, RegisterUser, User, ResponseUser, PayloadUser
 }

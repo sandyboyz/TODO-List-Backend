@@ -1,8 +1,8 @@
 import CONSTANT from './constant';
 
 const EMAIL_CONTENT = {
-  resetEmail: (name: string, token: string) => {
-    const link = `${CONSTANT.baseURL}/user/confirm-reset-password?t=${token}`;
+  resetEmail: (name: string, token: string) : string => {
+    const link = `${CONSTANT.BASE_URL}/user/confirm-reset-password?t=${token}`;
     return `
             ${name === '' ? 'Hi there!' : `Dear ${name},`}
             <br><br>
@@ -18,7 +18,7 @@ const EMAIL_CONTENT = {
             <br><br>
             Warm regards,
             <br>
-            Squad II-11
+            ${CONSTANT.AUTHOR}
         `
   },
 };

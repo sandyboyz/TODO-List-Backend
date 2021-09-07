@@ -15,7 +15,7 @@ const RESPONSE = (requestTime: string, message: string, data: any = null, error:
     message,
     data,
     error,
-    responseTime: moment().tz(CONSTANT.WIB).format(CONSTANT.dateFormat),
+    responseTime: moment().tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT),
   }
 };
 

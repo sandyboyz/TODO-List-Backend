@@ -1,20 +1,14 @@
 import nodemailer, { SentMessageInfo } from 'nodemailer';
-import * as dotenv from "dotenv";
-
-dotenv.config();
-
-const hostname = process.env.EMAIL_HOST;
-const username = process.env.EMAIL_USER;
-const password = process.env.EMAIL_PASS;
+import CONSTANT from '../helper/constant';
 
 const transporter = nodemailer.createTransport({
-  host: hostname,
-  port: 465,
+  host: CONSTANT.EMAIL_HOST,
+  port: CONSTANT.EMAIL_PORT,
   requireTLS: true,
   logger: true,
   auth: {
-    user: username,
-    pass: password
+    user: CONSTANT.EMAIL_USER,
+    pass: CONSTANT.EMAIL_PASS
   }
 });
 
@@ -23,7 +17,7 @@ transporter.verify().then(console.info).catch(console.error);
 const emailService = {
   sendEmail: (to: string, subject: string, html: string) : Promise<SentMessageInfo> => new Promise((resolve, reject) => {
     transporter.sendMail({
-      from: `${hostname} <${username}>`,
+      from: `${CONSTANT.AUTHOR} <${CONSTANT.EMAIL_USER}>`,
       to,
       subject,
       html,
