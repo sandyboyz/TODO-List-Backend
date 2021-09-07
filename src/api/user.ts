@@ -91,8 +91,9 @@ const userAPI = {
     const {newPassword} = req.body;
     try {
       const oneTimeToken = await OneTimeTokenModel.findOneByToken(token as string);
+      if (!oneTimeToken) return res.status(404).json(response(requestTime, 'Invalid url'));
       const user = await UserModel.findOne((oneTimeToken as BaseOneTimeToken).user.email);
-      if (!token || !user) return res.status(404).json(response(requestTime, 'Invalid url'));
+      if (!user) return res.status(404).json(response(requestTime, 'Invalid url'));
 
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(newPassword, salt);
