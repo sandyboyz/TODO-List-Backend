@@ -4,10 +4,12 @@ import * as bodyParser from "body-parser";
 import userRouter from "./routes/user";
 import LOGGER from './helper/logger';
 import cors from 'cors';
+import path from 'path';
 
 const app = express();
 dotenv.config();
 
+app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json({limit: '2mb'}));

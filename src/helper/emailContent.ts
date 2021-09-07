@@ -1,8 +1,8 @@
-const baseUrl = 'localhost:3000';
+import CONSTANT from './constant';
 
 const EMAIL_CONTENT = {
   resetEmail: (name: string, token: string) => {
-    const link = `${baseUrl}/user/confirm-reset-password?t=${token}`;
+    const link = `${CONSTANT.baseURL}/user/confirm-reset-password?t=${token}`;
     return `
             ${name === '' ? 'Hi there!' : `Dear ${name},`}
             <br><br>
