@@ -12,4 +12,9 @@ userRouter.post('/register', [
   body('password', 'Password must at least 8 digit string').isLength({min: 8})
 ], userAPI.register);
 
+userRouter.post('/login', [
+  body('email', 'Please provide a valid email').isEmail(),
+  body('password', 'Password must at least 8 digit string').isLength({min: 8})
+], userAPI.login);
+
 export default userRouter
