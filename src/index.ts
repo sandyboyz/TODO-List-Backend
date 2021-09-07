@@ -8,6 +8,7 @@ import cors from 'cors';
 const app = express();
 dotenv.config();
 
+app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json({limit: '2mb'}));
 app.use(cors());

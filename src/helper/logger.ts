@@ -2,7 +2,7 @@ import moment from 'moment-timezone';
 import CONSTANT from "./constant";
 
 const customLog = (type: string, text: string) : void => {
-  console.log(`${moment().tz(CONSTANT.WIB).format(CONSTANT.dateFormat)} >> ${type}::${text}`);
+  console.log(`[${moment().tz(CONSTANT.WIB).format(CONSTANT.dateFormat)}] ${type} ${text}`);
 };
 
 const LOGGER = {

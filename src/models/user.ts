@@ -1,6 +1,7 @@
 import {BaseUser, RegisterUser, User, ResponseUser} from "../types/user";
 import dbService from "../services/db";
-import {OkPacket, RowDataPacket} from "mysql2";
+import { OkPacket, QueryError, RowDataPacket } from 'mysql2';
+import { rejects } from 'assert';
 
 const create = (user: RegisterUser) : Promise<number | null> => new Promise((resolve, reject) => {
   const queryString = `INSERT INTO User (email, name, password, role) VALUES (?, ?, ?, ?)`;
@@ -31,7 +32,7 @@ const findOne = (email: string) : Promise<User | null> => new Promise((resolve, 
     const user: User = {
       id: row.id,
       email: row.email,
-      name: row.email,
+      name: row.name,
       password: row.password,
       role: row.role
     };
@@ -39,8 +40,18 @@ const findOne = (email: string) : Promise<User | null> => new Promise((resolve, 
   });
 });
 
+const update = (user: User) : Promise<QueryError | null> => new Promise((resolve, reject) => {
+  const queryString = `UPDATE User SET name=?, role=?, password=? WHERE email=?`;
+
+  dbService.query(queryString, [user.name, user.role, user.password, user.email], (err) => {
+    if (err) return reject(err);
+
+    resolve(null)
+  })
+});
+
 const UserModel = {
-  create, findOne
+  create, findOne, update
 };
 
 export default UserModel
