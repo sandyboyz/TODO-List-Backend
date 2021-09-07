@@ -6,7 +6,7 @@ import { validationResult } from 'express-validator';
 
 const getTodos = async (req: Request, res: Response): Promise<void> => {
   try {
-    const todos = await TaskModel.listAll;
+    const todos = await TaskModel.listAll();
     res.status(200).json({ todos })
   } catch (error) {
     throw error
@@ -16,8 +16,8 @@ const getTodos = async (req: Request, res: Response): Promise<void> => {
 const addTodo = async (req: Request, res: Response) => {
   try {
 
-    const newTodo = await TaskModel.create;
-    const allTodos = await TaskModel.listAll;
+    const newTodo = await TaskModel.create();
+    const allTodos = await TaskModel.listAll();
 
     res
       .status(201)
@@ -32,8 +32,8 @@ const updateTodo = async (req: Request, res: Response) => {
       params: { user },
       body,
     } = req
-    const updateTodo = await TaskModel.update;
-    const allTodos = await TaskModel.listAll;
+    const updateTodo = await TaskModel.update();
+    const allTodos = await TaskModel.listAll();
     res.status(200).json({
       message: "Todo updated",
       todo: updateTodo,
@@ -46,8 +46,8 @@ const updateTodo = async (req: Request, res: Response) => {
 
 const deleteTodo = async (req: Request, res: Response) => {
   try {
-    const deletedTodo = await TaskModel.del
-    const allTodos = await TaskModel.listAll;
+    const deletedTodo = await TaskModel.del();
+    const allTodos = await TaskModel.listAll();
     res.status(200).json({
       message: "Todo deleted",
       todo: deletedTodo,
