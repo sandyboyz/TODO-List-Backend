@@ -1,14 +1,12 @@
 import mysql from "mysql2";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import CONSTANT from '../helper/constant';
 
 const dbService = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PWD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT as unknown as number
+  host: CONSTANT.DB_HOST,
+  user: CONSTANT.DB_USER,
+  password: CONSTANT.DB_PWD,
+  database: CONSTANT.DB_NAME,
+  port: CONSTANT.DB_PORT
 });
 
 export default dbService

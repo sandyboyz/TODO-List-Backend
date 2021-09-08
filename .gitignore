@@ -3,3 +3,4 @@ build
 config
 .idea
 .env
+package-lock.json
