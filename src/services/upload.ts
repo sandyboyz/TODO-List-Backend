@@ -29,7 +29,7 @@ export default [
             return res.status(200).json({
               "status": "failed",
               "code": "500",
-              "message": err.message
+              "message": "ERROR happen!"
             });
           }
         });
