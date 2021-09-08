@@ -4,3 +4,4 @@ config
 .idea
 .env
 package-lock.json
+media
