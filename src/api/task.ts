@@ -71,7 +71,7 @@ const updateTodo = async (req: Request, res: Response) : Promise<Response> => {
     const currentTask = await TaskModel.findOne(task.id);
     if (!currentTask) return res.status(404).json(RESPONSE(requestTime, 'Task not found'));
 
-    if (file) currentTask.image = file.path;
+    if (file) currentTask.image = `${CONSTANT.BASE_URL}/media/uploads/${file.filename}`;
     if (task.description) currentTask.description = task.description;
     if (task.dueDate) currentTask.dueDate = moment(task.dueDate).tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT);
     if (task.isComplete) currentTask.isComplete = task.isComplete;
