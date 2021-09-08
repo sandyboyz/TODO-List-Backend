@@ -2,6 +2,7 @@ import express from "express";
 const userRouter = express.Router();
 import {body, query} from 'express-validator';
 import userAPI from '../api/user';
+import authMiddleware from '../middleware/auth';
 
 userRouter.post('/register', [
   body('email', 'Please provide a valid email').isEmail(),
@@ -29,5 +30,7 @@ userRouter.post('/confirm-reset-password', [
 userRouter.get('/confirm-reset-password', [
   query('t', 'Please provide a valid token').isUUID(4)
 ], userAPI.confirmResetPasswordPage);
+
+userRouter.get('', authMiddleware, userAPI.fetchData);
 
 export default userRouter

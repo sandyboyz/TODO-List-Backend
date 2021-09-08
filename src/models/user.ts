@@ -38,6 +38,30 @@ const UserModel = {
       resolve(user);
     });
   }),
+  findAll: () : Promise<Array<User> | null> => new Promise((resolve, reject) => {
+    const queryString = `SELECT * from User`;
+
+    dbService.query(queryString, (err, result) => {
+      // console.log("findOneV2", err, result)
+      if (err) return reject(err);
+
+      if (!(result as RowDataPacket[]).length) return resolve(null);
+
+      const rows = (result as RowDataPacket[]);
+      const users: Array<User> = [];
+      rows.forEach(row => {
+        users.push({
+          id: row.id,
+          email: row.email,
+          name: row.name,
+          password: row.password,
+          role: row.role
+        })
+      });
+
+      resolve(users);
+    });
+  }),
   update: (user: User) : Promise<QueryError | null> => new Promise((resolve, reject) => {
     const queryString = `UPDATE User SET name=?, role=?, password=? WHERE email=?`;
 

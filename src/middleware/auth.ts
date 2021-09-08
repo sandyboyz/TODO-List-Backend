@@ -15,7 +15,6 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) : void 
     if (!payload) throw new Error('verify token false');
 
     res.locals.payload = payload  as PayloadUser;
-    console.log(res.locals);
     next()
   } catch (e) {
     LOGGER.Error(e as string);

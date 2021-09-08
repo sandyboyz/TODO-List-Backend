@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {RegisterUser, LoginUser, User, BaseUser} from '../types/user';
+import { RegisterUser, LoginUser, User, BaseUser, PayloadUser, ResponseUser } from '../types/user';
 import {BaseOneTimeToken} from '../types/oneTimeToken';
 import UserModel from "../models/user";
 import OneTimeTokenModel from '../models/oneTimeToken';
@@ -117,6 +117,44 @@ const userAPI = {
       if (!user) return res.status(404).json(RESPONSE(requestTime, 'Invalid url'));
 
       res.render('confirm-reset-password')
+    } catch (e) {
+      LOGGER.Error(e as string);
+      return res.status(500).json(RESPONSE(requestTime, 'Internal server error', null, e))
+    }
+  },
+  // ADMIN OR USER BASED ON ROLE PAYLOAD
+  fetchData: async (req: Request, res: Response) : Promise<Response> => {
+    const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT);
+    const {payload} = res.locals;
+    const {email, role} = payload as PayloadUser;
+
+    try {
+      if (role === 1) {
+        const users = await UserModel.findAll();
+        if (!users) return res.status(404).json(RESPONSE(requestTime, 'User data not found'));
+
+        const responseUser: Array<ResponseUser> = [];
+        users.forEach(user => {
+          responseUser.push({
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role
+          })
+        });
+        return res.status(200).json(RESPONSE(requestTime, 'Fetch user data success', responseUser))
+      } else {
+        const user = await UserModel.findOne(email);
+        if (!user) return res.status(404).json(RESPONSE(requestTime, 'User data not found'));
+
+        const responseUser: ResponseUser = {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role
+        };
+        return res.status(200).json(RESPONSE(requestTime, 'Fetch user data success', responseUser))
+      }
     } catch (e) {
       LOGGER.Error(e as string);
       return res.status(500).json(RESPONSE(requestTime, 'Internal server error', null, e))
