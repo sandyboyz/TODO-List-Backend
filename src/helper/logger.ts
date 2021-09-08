@@ -1,18 +1,18 @@
 import moment from 'moment-timezone';
 import CONSTANT from "./constant";
 
-const customLog = (type: string, text: string) : void => {
+const customLog = (type: string, text: string): void => {
   console.log(`[${moment().tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT)}] ${type} ${text}`);
 };
 
 const LOGGER = {
-  Info: (text: string) : void => {
+  Info: (text: string): void => {
     customLog("INFO", text)
   },
-  Debug: (text: string) : void => {
+  Debug: (text: string): void => {
     customLog("DEBUG", text)
   },
-  Error: (text: string) : void => {
+  Error: (text: string): void => {
     customLog("ERROR", text)
   }
 };

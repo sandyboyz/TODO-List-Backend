@@ -11,70 +11,45 @@ const create = (task: BaseTask): Promise<number | null> => new Promise((resolve,
       if (err) return reject(err);
 
       const insertId = (result as OkPacket).insertId;
-      resolve(null, insertId);
+      resolve(insertId);
     }
   );
 });
 
 const update = (task: BaseTask): Promise<number | null> => new Promise((resolve, reject) => {
-  const queryString = "UPDATE Task SET  description=?,image=?, dueDate=?, isComplete = ?  WHERE user = ?";
+  const queryString = "UPDATE Task SET description=?,image=?, dueDate=?, isComplete = ?  WHERE user = ?";
 
   db.query(
     queryString,
     [task.description, task.image, task.image, task.dueDate, task.isComplete],
     (err, result) => {
-      if (err) return resolve(err);
-      resolve(null, insertId);
+      if (err) return reject(err);
+      const insertId = (result as OkPacket).insertId;
+      resolve(insertId);
     }
   );
 });
 
 const del = (task: BaseTask): Promise<number | null> => new Promise((resolve, reject) => {
-  const queryString = "DELETE FROM Task WHERE id = ?";
+  const queryString = "DELETE FROM Task WHERE user = ?";
 
-  db.query(
-    queryString,
-    [task.description, task.image, task.image, task.dueDate, task.isComplete],
-    (err, result) => {
-      if (err) return resolve(err);
-      resolve(null, insertId);
-    }
-  );
+  db.query(queryString, (err, result) => {
+    if (err) return reject(err);
+
+  });
 });
 
 const listAll = (task: TaskDetail): Promise<number | null> => new Promise((resolve, reject) => {
   const queryString = "SELECT * FROM Task WHERE user = ?";
+  db.query(queryString, (err, result) => {
+    if (err) return reject(err);
+    const row = (result as RowDataPacket)[0];
 
+  });
 });
 
 const TaskModel = {
   create, update, del, listAll
 };
 
-export default TaskModel
-
-
-// import { ITodo } from "../types/todo"
-// import { model, Schema } from "mysql2"
-
-// const todoSchema: Schema = new Schema(
-//   {
-//     name: {
-//       type: String,
-//       required: true,
-//     },
-
-//     description: {
-//       type: String,
-//       required: true,
-//     },
-
-//     status: {
-//       type: Boolean,
-//       required: true,
-//     },
-//   },
-//   { timestamps: true }
-// )
-
-// export default model<ITodo>("Todo", todoSchema)
+export default TaskModel;
