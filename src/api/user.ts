@@ -21,15 +21,22 @@ const userAPI = {
     if (!errors.isEmpty()) return res.status(400).json(RESPONSE(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
 
     const newUser: RegisterUser = req.body;
+    newUser.role = 2;
     try {
       const similarUser = await UserModel.findOne(newUser.email);
       if (similarUser) return res.status(400).json(RESPONSE(requestTime, 'User with given email is already exists'));
 
+      const password = newUser.password;
       const salt = await bcrypt.genSalt(10);
-      newUser.password = await bcrypt.hash(newUser.password, salt);
+      newUser.password = await bcrypt.hash(password, salt);
 
       await UserModel.create(newUser);
-      return res.status(201).json(RESPONSE(requestTime, 'Register new user success', newUser))
+      const responseUser = {
+        email: newUser.email,
+        name: newUser.name,
+        password
+      };
+      return res.status(201).json(RESPONSE(requestTime, 'Register new user success', responseUser))
     } catch (e) {
       LOGGER.Error(e as string);
       return res.status(500).json(RESPONSE(requestTime, 'Internal server error', null, e))
@@ -125,8 +132,7 @@ const userAPI = {
   // ADMIN OR USER BASED ON ROLE PAYLOAD
   fetchData: async (req: Request, res: Response) : Promise<Response> => {
     const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT);
-    const {payload} = res.locals;
-    const {email, role} = payload as PayloadUser;
+    const {email, role} = res.locals.payload as PayloadUser;
 
     try {
       if (role === 1) {
