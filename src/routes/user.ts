@@ -8,7 +8,7 @@ userRouter.post('/register', [
   body('name', 'Please provide a valid name').custom(field => {
     return typeof field === 'string' && field.length !== 0
   }),
-  body('role', 'Please provide a valid role').isIn([1, 2]),
+  body('role', 'Please provide a valid role').isIn([1, 2]), // 1 mean ADMIN, 2 mean USER
   body('password', 'Password must at least 8 digit string').isLength({min: 8})
 ], userAPI.register);
 
