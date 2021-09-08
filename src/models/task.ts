@@ -2,6 +2,8 @@ import { BaseTask, Task, TaskDetail } from "../types/task";
 import db from "../services/db";
 import { OkPacket, QueryError, RowDataPacket } from 'mysql2';
 import { PayloadUser, User } from '../types/user';
+import moment from 'moment-timezone';
+import CONSTANT from '../helper/constant';
 
 const create = (task: BaseTask): Promise<number | null> => new Promise((resolve, reject) => {
   const queryString = "INSERT INTO Task (user, description,image, dueDate, isComplete) VALUES (?,?,?,?,?)";
@@ -33,7 +35,7 @@ const findOne = (id: number) : Promise<Task | null> => new Promise((resolve, rej
       id: row.id,
       user: {email: row.user},
       description: row.description,
-      dueDate: row.dueDate,
+      dueDate: moment(row.dueDate).format(CONSTANT.DATE_FORMAT),
       image: row.image,
       isComplete: row.isComplete,
     };
@@ -80,7 +82,7 @@ const listAll = (user: PayloadUser): Promise<Array<Task> | null> => new Promise(
         id: row.id,
         user: row.user,
         description: row.description,
-        dueDate: row.dueDate,
+        dueDate: moment(row.dueDate).format(CONSTANT.DATE_FORMAT),
         image: row.image,
         isComplete: row.isComplete
       })

@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
-    "build": "tsc && mkdir -p build/views && cp src/views/confirm-reset-password.ejs build/views/confirm-reset-password.ejs",
+    "build": "tsc && mkdir -p build/views media/uploads && cp src/views/confirm-reset-password.ejs build/views/confirm-reset-password.ejs",
     "lint": "eslint . --ext .ts"
   },
   "keywords": [],

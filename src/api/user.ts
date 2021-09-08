@@ -81,7 +81,7 @@ const userAPI = {
 
       const html = EMAIL_CONTENT.resetEmail(user.name, token);
       await emailService.sendEmail(user.email, 'Reset Password Confirmation', html);
-      return res.status(200).json(RESPONSE(requestTime, 'Request reset password success', oneTimeToken))
+      return res.status(200).json(RESPONSE(requestTime, 'Request reset password success'))
     } catch (e) {
       LOGGER.Error(e as string);
       return res.status(500).json(RESPONSE(requestTime, 'Internal server error', null, e))
@@ -145,7 +145,6 @@ const userAPI = {
             id: user.id,
             email: user.email,
             name: user.name,
-            role: user.role
           })
         });
         return res.status(200).json(RESPONSE(requestTime, 'Fetch user data success', responseUser))
@@ -157,7 +156,6 @@ const userAPI = {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role
         };
         return res.status(200).json(RESPONSE(requestTime, 'Fetch user data success', responseUser))
       }

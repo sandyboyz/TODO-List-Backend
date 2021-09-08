@@ -4,7 +4,7 @@ export interface BaseTask {
   user: BaseUser,
   description: string,
   image: string,
-  dueDate: number,
+  dueDate: string,
   isComplete: boolean
 }
 

@@ -11,7 +11,10 @@ taskRouter.post("", [
   authMiddleware,
   uploadFile.single('file'),
   body('description', 'Please provide a description').notEmpty(),
-  body('dueDate', 'Please provide a description').isDate({format: 'YYYY-MM-DD'})
+  body('dueDate', 'Please provide a description').custom(val => {
+    const regex = /^[1-2]\d{3}-(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1]) ([0-1][0-9]|2[0-3]):([0-5][0-9])$/;
+    return val.match(regex)
+  })
 ], taskAPI.addTodo);
 
 taskRouter.put("", [

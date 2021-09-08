@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
     cb(null, __dirname + "/../../media/uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, `${moment().tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT)} - ${file.originalname}`);
+    cb(null, `${moment().tz(CONSTANT.WIB).format('YYYY-MM-DDTHH:mm:ss')}-${file.originalname}`);
   },
 });
 

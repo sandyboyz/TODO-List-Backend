@@ -14,10 +14,10 @@ const getTodos = async (req: Request, res: Response): Promise<Response> => {
   const payload: PayloadUser = {email, role};
 
   try {
-    const todos = await TaskModel.listAll(payload);
-    if (!todos) return res.status(404).json(RESPONSE(requestTime, 'Task data not found', []));
+    const tasks = await TaskModel.listAll(payload);
+    if (!tasks) return res.status(404).json(RESPONSE(requestTime, 'Task data not found', []));
 
-    return res.status(200).json(RESPONSE(requestTime, 'Fetch user data success', todos))
+    return res.status(200).json(RESPONSE(requestTime, 'Fetch task data success', tasks))
   } catch (e) {
     LOGGER.Error(e as string);
     return res.status(500).json(RESPONSE(requestTime, 'Internal server error', null, e))
@@ -38,11 +38,13 @@ const addTodo = async (req: Request, res: Response) : Promise<Response> => {
     if (!file) return res.status(400).json(RESPONSE(requestTime, 'Value in file missing the validation requirement', null, [{msg: 'Please provide a file', param: 'file', location: 'body'}]));
 
     const task: BaseTask = {
+      user: {
+        email: payload.email
+      },
       description,
-      dueDate,
-      image: file.path,
-      isComplete: false,
-      user: payload
+      dueDate: moment(dueDate).tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT),
+      image: `${CONSTANT.BASE_URL}/media/uploads/${file.filename}`,
+      isComplete: false
     };
     await TaskModel.create(task);
     return res.status(201).json(RESPONSE(requestTime, 'Add new task success', task))
@@ -71,11 +73,11 @@ const updateTodo = async (req: Request, res: Response) : Promise<Response> => {
 
     if (file) currentTask.image = file.path;
     if (task.description) currentTask.description = task.description;
-    if (task.dueDate) currentTask.dueDate = task.dueDate;
+    if (task.dueDate) currentTask.dueDate = moment(task.dueDate).tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT);
     if (task.isComplete) currentTask.isComplete = task.isComplete;
 
     await TaskModel.update(currentTask);
-    return res.status(201).json(RESPONSE(requestTime, 'Add new task success', currentTask))
+    return res.status(201).json(RESPONSE(requestTime, 'Update task data success', currentTask))
   } catch (e) {
     LOGGER.Error(e as string);
     return res.status(500).json(RESPONSE(requestTime, 'Internal server error', null, e))
@@ -97,6 +99,6 @@ const deleteTodo = async (req: Request, res: Response) : Promise<Response> => {
   }
 };
 
-const taskAPI = { getTodos, addTodo, updateTodo, deleteTodo}
+const taskAPI = { getTodos, addTodo, updateTodo, deleteTodo};
 
 export default taskAPI;
