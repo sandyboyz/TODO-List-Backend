@@ -5,8 +5,9 @@ import CONSTANT from '../helper/constant';
 import moment from 'moment-timezone'
 import LOGGER from '../helper/logger';
 import {PayloadUser} from '../types/user';
+import UserModel from '../models/user';
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) : void => {
+const authMiddleware = async (req: Request, res: Response, next: NextFunction) : Promise<void> => {
   const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT);
   let payload;
 
@@ -14,8 +15,12 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) : void 
     payload = tokenService.verifyTokenAuth(req);
     if (!payload) throw new Error('verify token false');
 
-    res.locals.payload = payload  as PayloadUser;
-    console.log(res.locals);
+    payload = payload as PayloadUser;
+    const user = await UserModel.findOne(payload.email);
+    if (!user) throw new Error('user not found');
+
+    payload.role = user.role;
+    res.locals.payload = payload;
     next()
   } catch (e) {
     LOGGER.Error(e as string);

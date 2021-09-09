@@ -17,7 +17,6 @@ interface User extends RegisterUser {
 
 interface ResponseUser extends BaseUser {
   name: string,
-  role: number,
   id: number
 }
 

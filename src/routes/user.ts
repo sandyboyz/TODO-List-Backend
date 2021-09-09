@@ -2,14 +2,15 @@ import express from "express";
 const userRouter = express.Router();
 import { body, query } from 'express-validator';
 import userAPI from '../api/user';
+import authMiddleware from '../middleware/auth';
 
 userRouter.post('/register', [
   body('email', 'Please provide a valid email').isEmail(),
   body('name', 'Please provide a valid name').custom(field => {
     return typeof field === 'string' && field.length !== 0
   }),
-  body('role', 'Please provide a valid role').isIn([1, 2]),
-  body('password', 'Password must at least 8 digit string').isLength({ min: 8 })
+  // body('role', 'Please provide a valid role').isIn([1, 2]), // 1 mean ADMIN, 2 mean USER
+  body('password', 'Password must at least 8 digit string').isLength({min: 8})
 ], userAPI.register);
 
 userRouter.post('/login', [
@@ -30,4 +31,6 @@ userRouter.get('/confirm-reset-password', [
   query('t', 'Please provide a valid token').isUUID(4)
 ], userAPI.confirmResetPasswordPage);
 
-export default userRouter;
+userRouter.get('', authMiddleware, userAPI.fetchData);
+
+export default userRouter

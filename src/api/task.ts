@@ -1,66 +1,104 @@
 import { Response, Request } from 'express';
-import { BaseTask, Task, TaskDetail } from '../types/task';
+import { BaseTask, Task } from '../types/task';
 import TaskModel from '../models/task';
 import RESPONSE from '../helper/response';
+import { PayloadUser } from '../types/user';
+import moment from 'moment-timezone';
+import CONSTANT from '../helper/constant';
+import LOGGER from '../helper/logger';
+import {validationResult} from 'express-validator';
 
-const getTodos = async (req: Request, res: Response): Promise<void> => {
+const getTodos = async (req: Request, res: Response): Promise<Response> => {
+  const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT);
+  const {email, role} = res.locals.payload;
+  const payload: PayloadUser = {email, role};
+
   try {
-    const Todos: TaskDetail = req.body;
-    const todos = await TaskModel.listAll(Todos);
-    res.status(200).json({ todos });
-  } catch (error) {
-    res.status(500).json('Internal server error');
+    const tasks = await TaskModel.listAll(payload);
+    if (!tasks) return res.status(404).json(RESPONSE(requestTime, 'Task data not found', []));
+
+    return res.status(200).json(RESPONSE(requestTime, 'Fetch task data success', tasks))
+  } catch (e) {
+    LOGGER.Error(e as string);
+    return res.status(500).json(RESPONSE(requestTime, 'Internal server error', null, e))
   }
 };
 
-const addTodo = async (req: Request, res: Response) => {
-  try {
-    const Todos: BaseTask = req.body;
-    const Todos1: TaskDetail = req.body;
-    const newTodo = await TaskModel.create(Todos);
-    const allTodos = await TaskModel.listAll(Todos1);
+const addTodo = async (req: Request, res: Response) : Promise<Response> => {
+  const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json(RESPONSE(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
 
-    res
-      .status(201)
-      .json({ message: 'Todo added', todo: newTodo, todos: allTodos });
-  } catch (error) {
-    res.status(500).json('Internal server error');
-  }
-};
-const updateTodo = async (req: Request, res: Response) => {
+  const {email, role} = res.locals.payload;
+  const payload: PayloadUser = {email, role};
+  const {description, dueDate} = req.body;
   try {
-    const {
-      params: { user },
-      body
-    } = req;
-    const Todos: BaseTask = req.body;
-    const Todos1: TaskDetail = req.body;
-    const updateTodo = await TaskModel.update(Todos);
-    const allTodos = await TaskModel.listAll(Todos1);
-    res.status(200).json({
-      message: 'Todo updated',
-      todo: updateTodo,
-      todos: allTodos
-    });
-  } catch (error) {
-    res.status(500).json('Internal server error');
+    // if (err) return res.status(422).json(RESPONSE(requestTime, 'Image upload error'));
+    const file = req.file;
+    if (!file) return res.status(400).json(RESPONSE(requestTime, 'Value in file missing the validation requirement', null, [{msg: 'Please provide a file', param: 'file', location: 'body'}]));
+
+    const task: BaseTask = {
+      user: {
+        email: payload.email
+      },
+      description,
+      dueDate: moment(dueDate).tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT),
+      image: `${CONSTANT.BASE_URL}/media/uploads/${file.filename}`,
+      isComplete: false
+    };
+    await TaskModel.create(task);
+    return res.status(201).json(RESPONSE(requestTime, 'Add new task success', task))
+  } catch (e) {
+    LOGGER.Error(e as string);
+    return res.status(500).json(RESPONSE(requestTime, 'Internal server error', null, e))
   }
 };
 
-const deleteTodo = async (req: Request, res: Response) => {
+const updateTodo = async (req: Request, res: Response) : Promise<Response> => {
+  const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json(RESPONSE(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
+
+  const {email, role} = res.locals.payload;
+  const payload: PayloadUser = {email, role};
+  const task: Task = req.body;
+  task.id = req.query.id as unknown as number;
+  task.user = payload;
   try {
-    const Todos: BaseTask = req.body;
-    const Todos1: TaskDetail = req.body;
-    const deletedTodo = await TaskModel.del(Todos);
-    const allTodos = await TaskModel.listAll(Todos1);
-    res.status(200).json({
-      message: 'Todo deleted',
-      todo: deletedTodo,
-      todos: allTodos
-    });
-  } catch (error) {
-    res.status(500).json('Internal server error');
+    const file = req.file;
+    if (!file && Object.keys(task).length <= 1) return res.status(400).json(RESPONSE(requestTime, 'There is nothing to changes'));
+
+    const currentTask = await TaskModel.findOne(task.id);
+    if (!currentTask) return res.status(404).json(RESPONSE(requestTime, 'Task not found'));
+
+    if (file) currentTask.image = `${CONSTANT.BASE_URL}/media/uploads/${file.filename}`;
+    if (task.description) currentTask.description = task.description;
+    if (task.dueDate) currentTask.dueDate = moment(task.dueDate).tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT);
+    if (task.isComplete) currentTask.isComplete = task.isComplete;
+
+    await TaskModel.update(currentTask);
+    return res.status(201).json(RESPONSE(requestTime, 'Update task data success', currentTask))
+  } catch (e) {
+    LOGGER.Error(e as string);
+    return res.status(500).json(RESPONSE(requestTime, 'Internal server error', null, e))
   }
 };
 
-export { getTodos, addTodo, updateTodo, deleteTodo };
+const deleteTodo = async (req: Request, res: Response) : Promise<Response> => {
+  const requestTime = moment().tz(CONSTANT.WIB).format(CONSTANT.DATE_FORMAT);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json(RESPONSE(requestTime, 'Value in body missing the validation requirement', null, errors.array()));
+
+  const {id} = req.query;
+  try {
+    await TaskModel.del(id as unknown as number);
+    return res.status(200).json(RESPONSE(requestTime, 'Delete task data success'))
+  } catch (e) {
+    LOGGER.Error(e as string);
+    return res.status(500).json(RESPONSE(requestTime, 'Internal server error', null, e))
+  }
+};
+
+const taskAPI = { getTodos, addTodo, updateTodo, deleteTodo};
+
+export default taskAPI;
